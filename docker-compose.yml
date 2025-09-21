@@ -1,0 +1,46 @@
+services:
+  playwright-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: playwright-demo
+    environment:
+      - BASE_URL=${BASE_URL}
+      - CI=true
+      - NODE_ENV=production
+    volumes:
+      - ./test-results:/app/test-results:rw
+      - ./playwright-report:/app/playwright-report:rw
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+        reservations:
+          memory: 1G
+          cpus: '1'
+    # Restart policy for resilience
+    restart: unless-stopped
+
+  # Development service
+  playwright-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: playwright-demo-dev
+    environment:
+      - BASE_URL=${BASE_URL}
+      - NODE_ENV=development
+      - DEBUG=pw:*
+    volumes:
+      # Mount source for live development
+      - .:/app:cached
+      - /app/node_modules
+      - ./test-results:/app/test-results:rw
+      - ./playwright-report:/app/playwright-report:rw
+    ports:
+      - "9323:9323"
+    # Use tini for proper signal handling
+    init: true
+    command: ["tail", "-f", "/dev/null"]
