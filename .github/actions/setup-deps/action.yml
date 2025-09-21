@@ -1,0 +1,42 @@
+name: 'Setup Node.js and Dependencies'
+description: 'Reusable action to setup Node.js and cache dependencies efficiently'
+outputs:
+  cache-hit:
+    description: 'Whether npm cache was hit'
+    value: ${{ steps.npm-cache.outputs.cache-hit }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+
+    - name: Cache npm dependencies
+      id: npm-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.npm
+          node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-
+      continue-on-error: true
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        if [ "${{ steps.npm-cache.outputs.cache-hit }}" = "true" ]; then
+          echo "✅ Cache hit - verifying node_modules integrity"
+          if [ ! -d "node_modules" ] || [ ! -f "node_modules/.package-lock.json" ]; then
+            echo "⚠️  Cache corrupted or incomplete - running npm ci"
+            npm ci
+          else
+            echo "🚀 Using cached dependencies"
+          fi
+        else
+          echo "📦 Cache miss or unavailable - running npm ci"
+          npm ci
+        fi
