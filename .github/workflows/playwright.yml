@@ -1,27 +1,104 @@
 name: Playwright Tests
 on:
   push:
-    branches: [main, master]
+    branches: [main, develop]
   pull_request:
-    branches: [main, master]
+    branches: [main, develop]
+
+env:
+  CI: true
+  # Optimize for single browser testing
+  PLAYWRIGHT_BROWSERS: chromium
+
+# Optimized Caching Strategy:
+# - Consolidated dependency management with reusable workflow components
+# - Enhanced Playwright browser caching with version pinning
+# - Reduced redundancy between lint and test jobs
+# - Improved cache hit rates with better key strategies
+
 jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
+  lint:
+    runs-on: ubuntu-22.04
+    outputs:
+      npm-cache-hit: ${{ steps.deps.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js and Dependencies
+        id: deps
+        uses: ./.github/actions/setup-deps
+
+      - name: Run ESLint
+        run: npm run eslint-check-only
+
+      - name: Run TypeScript check
+        run: npx tsc --noEmit
+
+  test:
+    needs: lint
+    timeout-minutes: 8
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Currently optimized for Chromium only
+        # To enable multi-browser testing, uncomment browsers below:
+        browser: [chromium] # firefox, webkit
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js and Dependencies
+        uses: ./.github/actions/setup-deps
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")
+          echo "version=$PLAYWRIGHT_VERSION" >> $GITHUB_OUTPUT
+          echo "PLAYWRIGHT_VERSION=$PLAYWRIGHT_VERSION" >> $GITHUB_ENV
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
         with:
-          node-version: lts/*
-      - name: Install dependencies
-        run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/playwright
+          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ steps.playwright-version.outputs.version }}
+          restore-keys: |
+            playwright-${{ runner.os }}-${{ matrix.browser }}-
+            playwright-${{ runner.os }}-
+        continue-on-error: true
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Install Playwright system dependencies
+        run: npx playwright install-deps ${{ matrix.browser }}
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+
       - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        run: npm run test -- --project=${{ matrix.browser }}
+        env:
+          # Optimize for CI performance
+          PLAYWRIGHT_WORKERS: 2
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always() && env.ACTIONS_RUNTIME_TOKEN != ''
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          name: playwright-results-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 3
+
+      - name: Archive test results (local fallback)
+        if: always() && env.ACTIONS_RUNTIME_TOKEN == ''
+        run: |
+          echo "🎭 Playwright test results for ${{ matrix.browser }}:"
+          echo "   Report: playwright-report/"
+          echo "   Results: test-results/"
+          [ -d "playwright-report" ] && echo "   Report size: $(du -sh playwright-report/ | cut -f1)"
+          [ -d "test-results" ] && echo "   Results size: $(du -sh test-results/ | cut -f1)"
