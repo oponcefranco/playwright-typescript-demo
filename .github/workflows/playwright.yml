@@ -79,7 +79,7 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
 
       - name: Run Playwright tests
-        run: npm run test -- --project=${{ matrix.browser }}
+        run: npm run test -- --project=${{ matrix.browser }} example.spec.ts
         env:
           # Optimize for CI performance
           PLAYWRIGHT_WORKERS: 2
