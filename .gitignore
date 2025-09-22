@@ -148,3 +148,8 @@ playwright-report/
 
 # nvm
 .nvmrc
+
+# MacOS specific files
+.DS_Store
+src/.DS_Store
+src/pom/.DS_Store
