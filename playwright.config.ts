@@ -39,6 +39,12 @@ export default defineConfig({
     launchOptions: {
       // slowMo: 1000,
     },
+    /* Global test environment variables */
+    testDataConfig: {
+      headerText: process.env.HEADER_TEXT || 'The Rick and Morty API',
+      headerLink1: process.env.HEADER_LINK_1 || 'About',
+      headerLink2: process.env.HEADER_LINK_2 || 'Docs',
+    },
   },
 
   /* Configure projects for major browsers */

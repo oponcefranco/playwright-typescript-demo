@@ -1,13 +1,25 @@
 import test from '../pom/common/base'
 
-test.describe('Validate Page', () => {
-  test('Homepage', async ({ homepage }) => {
-    console.log('Start test...')
+test.describe('HomePage', () => {
 
+  test.beforeEach(async ({ homepage }) => {
     await homepage.open()
+  })
+
+  test.afterEach(() => {
+    console.log('End Test')
+  })
+
+  test('Validate Icon', async ({ homepage }) => {
     await homepage.verifyHomeIconIsDisplayed()
-    await homepage.verifyHeaderIsDisplayed('The Rick and Morty API')
-    await homepage.verifyHeaderLinksHaveText('About')
-    await homepage.verifyHeaderLinksHaveText('Docs')
+  })
+
+  test('Validate Header Text', async ({ homepage, testDataConfig }) => {
+    await homepage.verifyHeaderIsDisplayed(testDataConfig.headerText)
+  })
+
+  test('Validate Header Links', async ({ homepage, testDataConfig }) => {
+    await homepage.verifyHeaderLinksHaveText(testDataConfig.headerLink1)
+    await homepage.verifyHeaderLinksHaveText(testDataConfig.headerLink2)
   })
 })
