@@ -1,8 +1,9 @@
 import js from '@eslint/js'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
+import type { TSESLint } from '@typescript-eslint/utils'
 
-export default [
+const config: TSESLint.FlatConfig.ConfigArray = [
   // Global ignores
   {
     ignores: [
@@ -25,4 +26,6 @@ export default [
   },
   // TypeScript configuration
   ...tseslint.configs.recommended,
-]
+] as const
+
+export default config
