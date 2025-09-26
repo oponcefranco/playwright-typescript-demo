@@ -33,17 +33,20 @@ This project demonstrates a Playwright testing framework featuring:
 ### Install
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/oponcefranco/playwright-typescript-demo.git
    cd playwright-typescript-demo
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Install Playwright browsers**
+
    ```bash
    npx playwright install
    ```
@@ -80,7 +83,7 @@ The project uses `playwright.config.ts` for test configuration:
 
 ```bash
 # Run specific test file
-npx playwright test homepage.spec.ts
+npx playwright test homePage.spec.ts
 
 # Run tests matching a pattern
 npx playwright test --grep "homepage"
@@ -127,7 +130,7 @@ export class HomePage extends BasePage {
 ### Usage in Tests
 
 ```typescript
-// src/tests/homepage.spec.ts
+// src/tests/homePage.spec.ts
 import test from '../pom/common/base'
 
 test.describe('Homepage Tests', () => {

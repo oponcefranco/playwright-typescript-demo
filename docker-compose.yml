@@ -40,7 +40,7 @@ services:
       - ./test-results:/app/test-results:rw
       - ./playwright-report:/app/playwright-report:rw
     ports:
-      - "9323:9323"
+      - '9323:9323'
     # Use tini for proper signal handling
     init: true
-    command: ["tail", "-f", "/dev/null"]
+    command: ['tail', '-f', '/dev/null']
