@@ -143,6 +143,7 @@ src/test-results/
 src/playwright-report/
 src/blob-report/
 src/playwright/.cache/
+test-results/
 
 playwright-report/
 
@@ -153,3 +154,7 @@ playwright-report/
 .DS_Store
 src/.DS_Store
 src/pom/.DS_Store
+
+# Doducmentation read-only
+DOCKER.md
+AGENTS.md
