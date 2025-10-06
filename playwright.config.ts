@@ -18,6 +18,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') })
  */
 export default defineConfig({
   testDir: './src/tests',
+  outputDir: 'test-results',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -27,7 +28,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   ...(process.env.CI && { workers: 1 }),
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [['html'], ['junit', { outputFile: 'junit-results/junit.xml' }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */

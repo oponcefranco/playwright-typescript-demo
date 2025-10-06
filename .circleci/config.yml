@@ -1,0 +1,61 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.1.0
+  browser-tools: circleci/browser-tools@1.4.6
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/node:18.20-browsers
+    steps:
+      - checkout
+
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+
+      - node/install-packages:
+          pkg-manager: npm
+
+      - run:
+          name: Install Playwright browsers
+          command: npx playwright install --with-deps
+
+      - run:
+          name: Run ESLint
+          command: npm run eslint-check-only
+
+      - run:
+          name: Run Prettier check
+          command: npx prettier --check .
+
+      - run:
+          name: Run Playwright tests
+          command: npm test:chromium
+
+      - run:
+          name: Debug - List generated files
+          command: |
+            echo "=== Workspace contents ==="
+            ls -la
+            echo "=== Looking for reports ==="
+            find . -name "*.xml" -o -name "*.html" -o -type d -name "*report*" -o -type d -name "*results*" | head -20
+          when: always
+
+      - store_artifacts:
+          path: playwright-report
+          when: always
+
+      - store_artifacts:
+          path: test-results
+          when: always
+
+      - store_artifacts:
+          path: junit-results
+          when: always
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build-and-test
