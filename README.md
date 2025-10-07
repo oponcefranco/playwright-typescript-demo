@@ -1,3 +1,5 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/oponcefranco/playwright-typescript-demo/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/oponcefranco/playwright-typescript-demo/tree/main)
+
 # Playwright TypeScript Demo
 
 A demo of a Playwright test automation framework built with TypeScript, diplaying best practices for functional and e2e testing using the Page Object Model (POM) pattern.
