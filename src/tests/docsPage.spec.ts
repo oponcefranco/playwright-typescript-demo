@@ -1,6 +1,6 @@
 import test from '../pom/common/base'
 
-test.describe.only('Documents Page', () => {
+test.describe('Documents Page', () => {
   test.beforeEach(async ({ docsPage }) => {
     /* Initialize */
     await docsPage.open()

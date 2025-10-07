@@ -1,6 +1,8 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/oponcefranco/playwright-typescript-demo/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/oponcefranco/playwright-typescript-demo/tree/main)
+
 # Playwright TypeScript Demo
 
-A comprehensive Playwright test automation framework built with TypeScript, demonstrating best practices for end-to-end testing using the Page Object Model (POM) pattern.
+A demo of a Playwright test automation framework built with TypeScript, diplaying best practices for functional and e2e testing using the Page Object Model (POM) pattern.
 
 ## Overview
 
@@ -151,7 +153,7 @@ test.describe('Homepage Tests', () => {
 
 ## Docker Support
 
-This project includes comprehensive Docker support for consistent testing environments.
+This project includes Docker support for testing environments.
 
 ### Docker Usage
 
@@ -170,13 +172,19 @@ For detailed Docker instructions, see [DOCKER.md](DOCKER.md).
 
 ### GitHub Actions
 
-The project includes an optimized GitHub Actions workflow (`.github/workflows/playwright.yml`) featuring:
+The project includes a GitHub Actions workflow (`.github/workflows/playwright.yml`) featuring:
 
 - **Lint and TypeScript checks** before running tests
 - **Browser caching** for faster CI runs
 - **Matrix strategy** for multi-browser testing (currently optimized for Chromium)
 - **Artifact uploads** for test reports and results
 - **Optimized caching** for dependencies and Playwright browsers
+
+#### Test Github Actions Locally
+
+```bash
+act -W '.github/workflows/playwright.yml' --container-architecture linux/amd64
+```
 
 ## Code Quality
 
@@ -205,8 +213,6 @@ npm run prettier
 - Modern ES modules support
 - Optimized for Node.js environment
 - Source maps for debugging
-
-## Contributing
 
 ### Workflow
 

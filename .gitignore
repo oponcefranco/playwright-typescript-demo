@@ -155,6 +155,9 @@ playwright-report/
 src/.DS_Store
 src/pom/.DS_Store
 
-# Doducmentation read-only
+# Local documentation read-only
 DOCKER.md
 AGENTS.md
+
+# JetBrains IDE
+.idea/
