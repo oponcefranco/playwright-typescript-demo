@@ -74,35 +74,11 @@ jobs:
 
       - slack/notify:
           event: pass
-          custom: |
-            {
-              "text": "✅ Playwright Tests Passed!",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "✅ *Playwright Tests Passed*\n*Branch:* $CIRCLE_BRANCH\n*Build:* <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>"
-                  }
-                }
-              ]
-            }
+          template: basic_success_1
 
       - slack/notify:
           event: fail
-          custom: |
-            {
-              "text": "❌ Playwright Tests Failed!",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "❌ *Playwright Tests Failed*\n*Branch:* $CIRCLE_BRANCH\n*Build:* <$CIRCLE_BUILD_URL|#$CIRCLE_BUILD_NUM>"
-                  }
-                }
-              ]
-            }
+          template: basic_fail_1
 
 workflows:
   version: 2
