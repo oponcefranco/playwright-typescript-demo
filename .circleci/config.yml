@@ -31,7 +31,7 @@ jobs:
 
       - run:
           name: Run Playwright tests
-          command: npm test:chromium
+          command: npm run test:chromium
 
       - run:
           name: Debug - List generated files
@@ -42,16 +42,33 @@ jobs:
             find . -name "*.xml" -o -name "*.html" -o -type d -name "*report*" -o -type d -name "*results*" | head -20
           when: always
 
-      - store_artifacts:
-          path: playwright-report
+      - run:
+          name: Compress reports
+          command: |
+            if [ -d "playwright-report" ]; then
+              tar -czf playwright-report.tar.gz playwright-report/
+            fi
+            if [ -d "test-results" ]; then
+              tar -czf test-results.tar.gz test-results/
+            fi
+            if [ -d "junit-results" ]; then
+              tar -czf junit-results.tar.gz junit-results/
+            fi
           when: always
 
       - store_artifacts:
-          path: test-results
+          path: playwright-report.tar.gz
+          destination: reports/playwright-report.tar.gz
           when: always
 
       - store_artifacts:
-          path: junit-results
+          path: test-results.tar.gz
+          destination: reports/test-results.tar.gz
+          when: always
+
+      - store_artifacts:
+          path: junit-results.tar.gz
+          destination: reports/junit-results.tar.gz
           when: always
 
 workflows:
